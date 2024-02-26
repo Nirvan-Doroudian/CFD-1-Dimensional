@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>main.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bbb529;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #cc7832;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.cpp</font>
+</center></td></tr></table>
+<pre><span class="s0">#include </span><span class="s2">&lt;iostream&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;fstream&gt;</span>
+
+<span class="s3">// Constants</span>
+<span class="s4">const int </span><span class="s1">numSpatialPoints = </span><span class="s5">50</span><span class="s4">; </span><span class="s3">// number of i's</span>
+<span class="s4">const int </span><span class="s1">numTemporalPoints = </span><span class="s5">150</span><span class="s4">; </span><span class="s3">// number of n's</span>
+<span class="s4">const double </span><span class="s1">dx = </span><span class="s5">2.0 </span><span class="s1">/ numSpatialPoints</span><span class="s4">; </span><span class="s3">//xmax = 2</span>
+<span class="s4">const double </span><span class="s1">dt = </span><span class="s5">0.5 </span><span class="s1">/ numTemporalPoints</span><span class="s4">; </span><span class="s3">//tmax = 0.5</span>
+<span class="s4">const double </span><span class="s1">speedBoundary = </span><span class="s5">1.0</span><span class="s4">;</span>
+<span class="s4">const double </span><span class="s1">velocityInitial = </span><span class="s5">1.0</span><span class="s4">;</span>
+<span class="s4">const int </span><span class="s1">xStart = </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s4">const int </span><span class="s1">xEnd = numSpatialPoints</span><span class="s4">;</span>
+<span class="s4">const int </span><span class="s1">tStart = </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s4">const int </span><span class="s1">tEnd = numTemporalPoints</span><span class="s4">;</span>
+
+<span class="s3">// Function to write data to a text file</span>
+<span class="s4">void </span><span class="s1">writeDataToFile(std::ofstream&amp; file</span><span class="s4">, const double</span><span class="s1">* data</span><span class="s4">, int </span><span class="s1">numPoints) {</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i = </span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; numPoints</span><span class="s4">; </span><span class="s1">++i) {</span>
+        <span class="s4">double </span><span class="s1">x = i * dx</span><span class="s4">;</span>
+        <span class="s1">file &lt;&lt; x &lt;&lt; </span><span class="s2">&quot;</span><span class="s4">\t</span><span class="s2">&quot; </span><span class="s1">&lt;&lt; data[i] &lt;&lt; </span><span class="s2">&quot;</span><span class="s4">\n</span><span class="s2">&quot;</span><span class="s4">;</span>
+    <span class="s1">}</span>
+    <span class="s1">file &lt;&lt; </span><span class="s2">&quot;============================================&quot; </span><span class="s1">&lt;&lt; </span><span class="s2">&quot;</span><span class="s4">\n</span><span class="s2">&quot; </span><span class="s1">&lt;&lt; </span><span class="s2">&quot;============================================&quot; </span><span class="s1">&lt;&lt; </span><span class="s2">&quot;</span><span class="s4">\n</span><span class="s2">&quot;</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">int </span><span class="s1">main() {</span>
+    <span class="s1">std::ofstream file(</span><span class="s2">&quot;flow_results.txt&quot;</span><span class="s1">)</span><span class="s4">;</span>
+    <span class="s1">file &lt;&lt; </span><span class="s2">&quot;x or i </span><span class="s4">\t</span><span class="s2">&quot; </span><span class="s1">&lt;&lt; </span><span class="s2">&quot;velocity </span><span class="s4">\n</span><span class="s2">&quot;</span><span class="s4">;</span>
+
+    <span class="s3">// Initialize arrays</span>
+    <span class="s4">double </span><span class="s1">velocities[numSpatialPoints]</span><span class="s4">;</span>
+    <span class="s4">double </span><span class="s1">newVelocities[numSpatialPoints]</span><span class="s4">;</span>
+
+    <span class="s3">// Set initial conditions</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i = </span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; numSpatialPoints</span><span class="s4">; </span><span class="s1">++i) {</span>
+        <span class="s4">if </span><span class="s1">(i &gt;= </span><span class="s5">12 </span><span class="s1">&amp;&amp; i &lt;= </span><span class="s5">25</span><span class="s1">) {</span>
+            <span class="s1">velocities[i] = </span><span class="s5">2.0</span><span class="s4">;</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s1">velocities[i] = velocityInitial</span><span class="s4">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s3">// Solving the flow equation</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">t = tStart</span><span class="s4">; </span><span class="s1">t &lt; tEnd</span><span class="s4">; </span><span class="s1">++t) {</span>
+        <span class="s3">// Apply boundary conditions</span>
+        <span class="s1">velocities[xStart] = speedBoundary</span><span class="s4">;</span>
+        <span class="s1">velocities[xEnd - </span><span class="s5">1</span><span class="s1">] = speedBoundary</span><span class="s4">;</span>
+
+        <span class="s3">// Update velocity at interior points</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i = </span><span class="s5">1</span><span class="s4">; </span><span class="s1">i &lt; numSpatialPoints - </span><span class="s5">1</span><span class="s4">; </span><span class="s1">++i) {</span>
+            <span class="s1">newVelocities[i] = velocities[i] - </span><span class="s5">0.5 </span><span class="s1">* (dt / dx) * (velocities[i] - velocities[i - </span><span class="s5">1</span><span class="s1">])</span><span class="s4">;</span>
+        <span class="s1">}</span>
+
+        <span class="s3">// Update velocities array for the next time step</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i = </span><span class="s5">1</span><span class="s4">; </span><span class="s1">i &lt; numSpatialPoints - </span><span class="s5">1</span><span class="s4">; </span><span class="s1">++i) {</span>
+            <span class="s1">velocities[i] = newVelocities[i]</span><span class="s4">;</span>
+        <span class="s1">}</span>
+
+        <span class="s3">// Write data to the file</span>
+        <span class="s1">writeDataToFile(file</span><span class="s4">, </span><span class="s1">velocities</span><span class="s4">, </span><span class="s1">numSpatialPoints)</span><span class="s4">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">file.close()</span><span class="s4">;</span>
+    <span class="s1">std::cout &lt;&lt; </span><span class="s2">&quot;Simulation completed. Results written to flow_results.txt&quot; </span><span class="s1">&lt;&lt; std::endl</span><span class="s4">;</span>
+
+    <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>
